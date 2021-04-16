@@ -131,3 +131,5 @@ dmypy.json
 # also take off idea, dont need it
 .idea/
 venv
+logs
+*.jsonl
