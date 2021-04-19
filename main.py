@@ -43,7 +43,7 @@ class LogMerger:
 
         # We will be needed some variables, so start it bellow
         string_to_search = 'timestamp": "'
-        i, j = 0, 0
+
         end_first_file = False
         end_second_file = False
         string_from_first = None
@@ -52,6 +52,7 @@ class LogMerger:
         take_second = True
 
         # for readlines
+        # i, j = 0, 0
         # len_first = len(self.lines_in_first)
         # len_second = len(self.lines_in_second)
 
