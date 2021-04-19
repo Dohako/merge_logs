@@ -1,8 +1,7 @@
-import argparse
-import os
-import time
-
+from os.path import abspath
+from time import time
 from pathlib import Path
+from argparse import ArgumentParser, Namespace
 
 _END_FILE_NAME = 'result_1.jsonl'
 
@@ -31,8 +30,10 @@ class LogMerger:
         self.file_log_b = open(self.log_2, 'r')
         self.result_file = open(self.end_file, 'w')
 
-        self.lines_in_first = self.file_log_a.readlines()
-        self.lines_in_second = self.file_log_b.readlines()
+        # for readlines
+        # we could take only one line, but we don't need to cause of log files size (small enough)
+        # self.lines_in_first = self.file_log_a.readlines()
+        # self.lines_in_second = self.file_log_b.readlines()
 
     def close_files(self):
         self.file_log_a.close()
@@ -51,18 +52,27 @@ class LogMerger:
         string_from_second = None
         take_first = True
         take_second = True
-        len_first = len(self.lines_in_first)
-        len_second = len(self.lines_in_second)
+
+        # for readlines
+        # len_first = len(self.lines_in_first)
+        # len_second = len(self.lines_in_second)
 
         while True:  # бесконечные циклы не безопасны, но для данного случая это может быть быстрее
             # if first file still have elements and there is a call for new element => take it
             if end_first_file is False and take_first:
-                if i < len_first:
-                    string_from_first = self.lines_in_first[i]
-                    i += 1
-                else:
+                # using readline
+                string_from_first = self.file_log_a.readline()
+                if string_from_first == '':
                     end_first_file = True
                     string_from_first = None
+                # using readlines and know len
+                # if i < len_first:
+                #     string_from_first = self.lines_in_first[i]
+                #     i += 1
+                # else:
+                #     end_first_file = True
+                #     string_from_first = None
+                # using readlines and don't know len try-except style
                 # try:
                 #     string_from_first = self.lines_in_first[i]
                 #     i += 1
@@ -72,12 +82,18 @@ class LogMerger:
                 take_first = False
             # same
             if end_second_file is False and take_second:
-                if j < len_second:
-                    string_from_second = self.lines_in_second[j]
-                    j += 1
-                else:
+                string_from_second = self.file_log_b.readline()
+                if string_from_second == '':
                     end_second_file = True
                     string_from_second = None
+
+                # if j < len_second:
+                #     string_from_second = self.lines_in_second[j]
+                #     j += 1
+                # else:
+                #     end_second_file = True
+                #     string_from_second = None
+
                 # try:
                 #     string_from_second = self.lines_in_second[j]
                 #     j += 1
@@ -127,14 +143,14 @@ class LogMerger:
         self.close_files()
 
 
-def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description='Tool to generate test logs.')
+def _parse_args() -> Namespace:
+    parser = ArgumentParser(description='Tool to generate test logs.')
 
     parser.add_argument(
         '-first_file_path',
         metavar='<FIRST FILE PATH>',
         type=str,
-        default=os.path.abspath('./logs/log_a.jsonl'),
+        default=abspath('./logs/log_a.jsonl'),
         help='path to log_a',
     )
 
@@ -142,7 +158,7 @@ def _parse_args() -> argparse.Namespace:
         '-second_file_path',
         metavar='<SECOND FILE PATH>',
         type=str,
-        default=os.path.abspath('./logs/log_b.jsonl'),
+        default=abspath('./logs/log_b.jsonl'),
         help='path to log_b',
     )
 
@@ -150,7 +166,7 @@ def _parse_args() -> argparse.Namespace:
         '-result_file_dir',
         metavar='<RESULT FILE DIR>',
         type=str,
-        default=os.path.abspath('./logs/'),
+        default=abspath('./logs/'),
         help='result file dir',
     )
 
@@ -158,9 +174,9 @@ def _parse_args() -> argparse.Namespace:
 
 
 def take_max_len():
-    t0 = time.time()
+    t0 = time()
     # TBD
-    print(f"finished in {time.time() - t0:0f} sec")
+    print(f"finished in {time() - t0:0f} sec")
 
 
 def main_rude():
@@ -168,10 +184,10 @@ def main_rude():
     first_file_path = Path(args.first_file_path)
     second_file_path = Path(args.second_file_path)
     result_file_dir = Path(args.result_file_dir)
-    t0 = time.time()
+    t0 = time()
     merge_me = LogMerger(first_file_path, second_file_path, result_file_dir)
     merge_me.rude_merge()
-    print(f"finished in {time.time() - t0:0f} sec")
+    print(f"finished in {time() - t0:0f} sec")
 
 
 if __name__ == '__main__':
