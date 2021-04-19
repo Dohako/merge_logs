@@ -21,9 +21,7 @@ class LogMerger:
         self.lines_in_second = None
         # if string_to_search in first[1]:
         #     print(first[1].split(string_to_search)[1].split('"')[0])
-        # first_date = datetime.datetime.strptime(first[1].split(string_to_search)[1].split('"')[0], "%Y-%m-%d %H:%M:%S")
-        # second_date = datetime.datetime.strptime(first[2].split(string_to_search)[1].split('"')[0], "%Y-%m-%d %H:%M:%S")
-        # print(first_date > second_date)
+
 
     def open_files(self):
         self.file_log_a = open(self.log_1, 'r')
@@ -127,6 +125,11 @@ class LogMerger:
             else:
                 take_second = True
                 continue
+
+            # so we have YYYY-MM-DD HH:MM:SS format. For this format we even don't need to transfer data to
+            # datetime, ordinary string comparison will work fine. Still, we can switch type and compare purely
+            # first_timestamp = datetime.datetime.strptime(first_timestamp, "%Y-%m-%d %H:%M:%S")
+            # second_timestamp = datetime.datetime.strptime(second_timestamp, "%Y-%m-%d %H:%M:%S")
 
             # hard checking which date goes first. If equivalent => first file goes first
             if first_timestamp > second_timestamp:
