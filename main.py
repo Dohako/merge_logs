@@ -3,13 +3,16 @@ from time import time
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 
-_END_FILE_NAME = 'result_1.jsonl'
+_END_FILE_NAME = 'result.jsonl'
 
 
 class LogMerger:
 
-    def __init__(self, first_file_path, second_file_path, result_file_dir):
-        self.end_file = result_file_dir.joinpath(_END_FILE_NAME)
+    def __init__(self, first_file_path, second_file_path, result_file_path, choose_result_file: bool):
+        if choose_result_file:
+            self.end_file = result_file_path
+        else:
+            self.end_file = Path(abspath('.')).joinpath(_END_FILE_NAME)
         self.log_1 = first_file_path
         self.log_2 = second_file_path
 
@@ -151,7 +154,7 @@ def _parse_args() -> Namespace:
     parser = ArgumentParser(description='Tool to generate test logs.')
 
     parser.add_argument(
-        '-first_file_path',
+        'first_file_path',
         metavar='<FIRST FILE PATH>',
         type=str,
         default=abspath('./logs/log_a.jsonl'),
@@ -159,7 +162,7 @@ def _parse_args() -> Namespace:
     )
 
     parser.add_argument(
-        '-second_file_path',
+        'second_file_path',
         metavar='<SECOND FILE PATH>',
         type=str,
         default=abspath('./logs/log_b.jsonl'),
@@ -167,11 +170,20 @@ def _parse_args() -> Namespace:
     )
 
     parser.add_argument(
-        '-result_file_dir',
-        metavar='<RESULT FILE DIR>',
+        '-o','-options',
+        action='store_const',
+        const=True,
+        default=False,
+        help='choose result file',
+        dest='choose_result_file',
+    )
+
+    parser.add_argument(
+        'result_file_path',
+        metavar='<RESULT FILE PATH>',
         type=str,
-        default=abspath('./logs/'),
-        help='result file dir',
+        default=abspath('./logs/result.jsonl'),
+        help='result file path',
     )
 
     return parser.parse_args()
@@ -187,9 +199,9 @@ def main_rude():
     args = _parse_args()
     first_file_path = Path(args.first_file_path)
     second_file_path = Path(args.second_file_path)
-    result_file_dir = Path(args.result_file_dir)
+    result_file_path = Path(args.result_file_path)
     t0 = time()
-    merge_me = LogMerger(first_file_path, second_file_path, result_file_dir)
+    merge_me = LogMerger(first_file_path, second_file_path, result_file_path, args.choose_result_file)
     merge_me.rude_merge()
     print(f"finished in {time() - t0:0f} sec")
 

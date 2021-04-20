@@ -33,7 +33,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Tool to generate test logs.')
 
     parser.add_argument(
-        '-output_dir',
+        'output_dir',
         metavar='<OUTPUT DIR>',
         type=str,
         default=os.path.abspath('./logs'),
