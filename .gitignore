@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# also take off idea, dont need it
+.idea/
+venv
+logs
+*.jsonl
